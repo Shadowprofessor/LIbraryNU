@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>NU Library Dashboard</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       background: linear-gradient(135deg, #020a0f 0%, #0f1621 100%);
@@ -51,7 +49,6 @@
       background: #00bcd4;
       box-shadow: 0 0 25px #00bcd4;
     }
-    
     #cartIcon {
       position: absolute;
       top: 10px;
@@ -71,7 +68,6 @@
       font-size: 0.9rem;
       font-weight: bold;
     }
-
     #searchBar {
       width: 100%;
       max-width: 600px;
@@ -90,7 +86,6 @@
       box-shadow: inset 0 0 12px #00ffffcc;
       background: #051822;
     }
-
     #booksContainer {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -98,7 +93,6 @@
       width: 100%;
       max-width: 1200px;
     }
-
     .bookCard {
       background: rgba(0, 255, 255, 0.1);
       border-radius: 15px;
@@ -141,7 +135,6 @@
       margin-bottom: 1rem;
       text-shadow: 0 0 5px #0ff;        
     }
-
     .locationBtn {
       background: #00ffff44;
       border: 1px solid #0ff;
@@ -157,17 +150,10 @@
       color: #000;
       box-shadow: 0 0 15px #0ff;
     }
-
     @media (max-width: 500px) {
-      #greeting {
-        font-size: 1.4rem;
-      }
-      #searchBar {
-        font-size: 1rem;
-      }
-      .bookCard h3 {
-        font-size: 1.1rem;
-      }
+      #greeting { font-size: 1.4rem; }
+      #searchBar { font-size: 1rem; }
+      .bookCard h3 { font-size: 1.1rem; }
     }
   </style>
 </head>
@@ -185,6 +171,11 @@
   <main id="booksContainer"></main>
 
   <script>
+    // 🔒 Block unauthenticated access
+    if (!localStorage.getItem("nuLoggedIn")) {
+      window.location.href = "login.html";
+    }
+
     const channelId = '2865130';
     const apiKey = 'M7R8RED3YIDRLP13';
 
@@ -215,7 +206,7 @@
         field: "field3",
         availability: 0,
         image: "https://images-na.ssl-images-amazon.com/images/P/159327288X.01.MZZZZZZZ.jpg"
-      },
+      }
     ];
 
     function getUserName() {
@@ -241,34 +232,30 @@
       container.innerHTML = `<p style="color:#0ff; text-align:center;">Loading books...</p>`;
 
       const tsData = await fetchThingSpeakData();
-
       if (tsData) {
-        booksData.forEach((book) => {
+        booksData.forEach(book => {
           const val = tsData[book.field];
-          book.availability =
-            val !== null && val !== undefined ? parseInt(val) || 0 : book.availability;
+          book.availability = val ? parseInt(val) || 0 : 0;
         });
       }
 
-      const filteredBooks = booksData.filter(
-        (book) =>
-          book.title.toLowerCase().includes(filter.toLowerCase()) ||
-          book.author.toLowerCase().includes(filter.toLowerCase())
+      const filtered = booksData.filter(book =>
+        book.title.toLowerCase().includes(filter.toLowerCase()) ||
+        book.author.toLowerCase().includes(filter.toLowerCase())
       );
 
       container.innerHTML = "";
 
-      if (filteredBooks.length === 0) {
-        container.innerHTML =
-          '<p style="color:#0ff; font-style: italic; text-align:center;">No books found.</p>';
+      if (filtered.length === 0) {
+        container.innerHTML = `<p style="color:#0ff; text-align:center; font-style: italic;">No books found.</p>`;
         return;
       }
 
-      filteredBooks.forEach((book) => {
+      filtered.forEach(book => {
         const card = document.createElement("div");
         card.className = "bookCard";
         card.innerHTML = `
-          <img src="${book.image}" alt="${book.title}" class="bookImage" />
+          <img src="${book.image}" class="bookImage" />
           <h3>${book.title}</h3>
           <p>by ${book.author}</p>
           <p>${book.description}</p>
@@ -276,7 +263,7 @@
           <button class="locationBtn" onclick="event.stopPropagation(); window.location.href='qr.html?bookId=${book.id}'">📍 Find Location</button>
         `;
         card.addEventListener("click", () => {
-          localStorage.setItem("selectedBookId", book.id);
+          localStorage.setItem("selectedBook", JSON.stringify(book));
           window.location.href = "book.html";
         });
         container.appendChild(card);
@@ -287,17 +274,16 @@
       const name = getUserName();
       const hour = new Date().getHours();
       let greet = "Hello";
-
       if (hour >= 5 && hour < 12) greet = "Good Morning";
       else if (hour >= 12 && hour < 17) greet = "Good Afternoon";
       else if (hour >= 17 && hour < 21) greet = "Good Evening";
-
       document.getElementById("greeting").textContent = `${greet}, ${name}!`;
     }
 
     document.getElementById("logoutBtn").addEventListener("click", () => {
       localStorage.removeItem("token");
       localStorage.removeItem("username");
+      localStorage.removeItem("nuLoggedIn");
       window.location.href = "login.html";
     });
 
@@ -308,10 +294,8 @@
     window.onload = () => {
       updateGreeting();
       renderBooks();
-
       setInterval(() => {
-        const filter = document.getElementById("searchBar").value;
-        renderBooks(filter);
+        renderBooks(document.getElementById("searchBar").value);
       }, 5000);
     };
   </script>
