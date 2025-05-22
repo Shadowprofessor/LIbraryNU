@@ -38,7 +38,7 @@
     }
     .form-group input {
       width: 100%;
-      padding: 12px 12px 12px 12px;
+      padding: 12px;
       border: none;
       border-radius: 8px;
       outline: none;
@@ -59,7 +59,6 @@
       font-size: 16px;
       pointer-events: none;
       transition: 0.3s ease all;
-      background: transparent;
     }
     .form-group input:focus + label,
     .form-group input:not(:placeholder-shown) + label {
@@ -149,11 +148,11 @@
 
       const user = JSON.parse(userStr);
 
-      // Check username/email and password
       if ((username === user.email || username === user.name) && password === user.password) {
-        localStorage.setItem('nuLoggedIn', JSON.stringify(user));
+        localStorage.setItem('nuLoggedIn', true);
+        localStorage.setItem('username', user.name);
         alert('Login successful! Redirecting to Dashboard...');
-        window.location.href = 'dashboard.html'; // Change to your dashboard page path
+        window.location.href = 'index.html';
       } else {
         errorMsg.textContent = 'Invalid username/email or password.';
       }
