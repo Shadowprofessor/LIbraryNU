@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NU Library | Welcome</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    background: radial-gradient(circle at center, #001011, #002933, #004455);
+    font-family: 'Orbitron', monospace, sans-serif;
+    overflow: hidden;
+    color: #0ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  #logo {
+    width: 120px;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 10px #0ff);
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  @keyframes glow {
+    from { filter: drop-shadow(0 0 10px #0ff); }
+    to { filter: drop-shadow(0 0 30px #0ff); }
+  }
+  h1 {
+    font-size: 2.8rem;
+    letter-spacing: 0.2em;
+    text-align: center;
+    margin: 0 0 1.5rem 0;
+    text-shadow:
+      0 0 10px #0ff,
+      0 0 20px #0ff,
+      0 0 30px #0ff;
+  }
+  #welcome-msg {
+    font-size: 1.3rem;
+    color: #33ffffaa;
+    margin-bottom: 2rem;
+  }
+  #loading-bar {
+    width: 300px;
+    height: 8px;
+    background: #00334444;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 0 10px #0ff;
+  }
+  #progress {
+    height: 100%;
+    background: linear-gradient(90deg, #00ffff, #33ffff);
+    animation: progressAnim 3s linear forwards;
+    width: 0%;
+  }
+  @keyframes progressAnim {
+    100% { width: 100%; }
+  }
+</style>
+</head>
+<body>
+  <img id="logo" src="NU logo.png" alt="NU Logo" />
+  <h1>Welcome to NU Library</h1>
+  <div id="welcome-msg">Loading your personalized experience...</div>
+  <div id="loading-bar"><div id="progress"></div></div>
+
+<script>
+  // Simulate fetching student name (replace with real auth check)
+  function getStudentName() {
+    return localStorage.getItem('username') || null;
+  }
+
+  function redirectToPage() {
+    const user = getStudentName();
+    if (user) {
+      document.getElementById('welcome-msg').textContent = `Welcome ${user} to the NU Library!`;
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 3500);
+    } else {
+      document.getElementById('welcome-msg').textContent = 'Please login to continue.';
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 3500);
+    }
+  }
+
+  window.onload = redirectToPage;
+</script>
+</body>
+</html>

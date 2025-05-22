@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NU Library Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #020a0f 0%, #0f1621 100%);
+      color: #0ff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      overflow-x: hidden;
+    }
+    header {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #0ff3;
+      padding-bottom: 1rem;
+    }
+    #greeting {
+      font-size: 1.8rem;
+      font-weight: 600;
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    }
+    #logoutBtn {
+      background: #0ff;
+      border: none;
+      padding: 0.5rem 1rem;
+      color: #020a0f;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      box-shadow: 0 0 15px #0ff88;
+    }
+    #logoutBtn:hover {
+      background: #00bcd4;
+      box-shadow: 0 0 25px #00bcd4;
+    }
+
+    #searchBar {
+      width: 100%;
+      max-width: 600px;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      border: none;
+      font-size: 1.2rem;
+      outline: none;
+      background: #031016;
+      color: #0ff;
+      box-shadow: inset 0 0 8px #0ff4;
+      margin-bottom: 2rem;
+      transition: box-shadow 0.3s ease;
+    }
+    #searchBar:focus {
+      box-shadow: inset 0 0 12px #00ffffcc;
+      background: #051822;
+    }
+
+    #booksContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .bookCard {
+      background: rgba(0, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 0 10px #0ff6, inset 0 0 15px #0ff8;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      color: #0ff;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+      text-align: center;
+    }
+    .bookCard:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 20px #00ffffcc, inset 0 0 20px #00ffffcc;
+    }
+    .bookCard img.bookImage {
+      width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 8px #0ff5;
+    }
+    .bookCard h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-shadow: 0 0 8px #0ff;
+    }
+    .bookCard p {
+      margin: 0 0 1rem 0;
+      font-style: italic;
+      color: #99ffffcc;
+    }
+    .availability {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 5px #0ff;        
+    }
+    .borrowBtn {
+      background: #0ff;
+      border: none;
+      padding: 0.7rem;
+      border-radius: 10px;
+      font-weight: 700;
+      color: #020a0f;
+      cursor: pointer;
+      box-shadow: 0 0 12px #0ff;
+      transition: background 0.3s ease;
+    }
+    .borrowBtn:disabled {
+      background: #06666655;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .borrowBtn:hover:not(:disabled) {
+      background: #00bcd4;
+      box-shadow: 0 0 20px #00bcd4;
+    }
+
+    @media (max-width: 500px) {
+      #greeting {
+        font-size: 1.4rem;
+      }
+      #searchBar {
+        font-size: 1rem;
+      }
+      .bookCard h3 {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div id="greeting">Welcome, Student!</div>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <input type="text" id="searchBar" placeholder="Search books by title or author..." autocomplete="off" spellcheck="false" />
+
+  <main id="booksContainer"></main>
+
+  <script>
+    const channelId = '2865130';
+    const apiKey = 'M7R8RED3YIDRLP13';
+
+    const booksData = [
+      {
+        id: 1,
+        title: "The History and Future of AI",
+        author: "T. CAVALIERE",
+        description: "Dive into the history and future of AI, from its earliest beginnings to the present day, including breakthroughs, key players, and controversies.",
+        field: "field1",
+        availability: 0,
+        image: "https://m.media-amazon.com/images/I/71tZOGS9WVL._SY522_.jpg"
+      },
+      {
+        id: 2,
+        title: "Neural Networks and Learning Machines",
+        author: "Simon Haykin",
+        description: "Learn the latest web design trends and technologies with practical examples.",
+        field: "field2",
+        availability: 0,
+        image: "https://images-na.ssl-images-amazon.com/images/P/8120340000.01.LZZZZZZZ.jpg"
+      },
+      {
+        id: 3,
+        title: "Metasploit: the penetration tester's guide",
+        author: "Kennedy, David and Aharoni, Mati",
+        description: "I is a practical handbook for using the Metasploit Framework to identify, exploit, and validate security vulnerabilities.",
+        availability: 0,
+        image: "https://images-na.ssl-images-amazon.com/images/P/159327288X.01.MZZZZZZZ.jpg"
+      },
+    ];
+
+    function getUserName() {
+      return localStorage.getItem("username") || "Student";
+    }
+
+    async function fetchThingSpeakData() {
+      try {
+        const res = await fetch(
+          `https://api.thingspeak.com/channels/${channelId}/feeds/last.json?api_key=${apiKey}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch ThingSpeak data");
+        const data = await res.json();
+        return data;
+      } catch (err) {
+        console.error(err);
+        return null;
+      }
+    }
+
+    async function renderBooks(filter = "") {
+      const container = document.getElementById("booksContainer");
+      container.innerHTML = `<p style="color:#0ff; text-align:center;">Loading books...</p>`;
+
+      const tsData = await fetchThingSpeakData();
+
+      if (tsData) {
+        booksData.forEach((book) => {
+          const val = tsData[book.field];
+          book.availability =
+            val !== null && val !== undefined ? parseInt(val) || 0 : book.availability;
+        });
+      }
+
+      const filteredBooks = booksData.filter(
+        (book) =>
+          book.title.toLowerCase().includes(filter.toLowerCase()) ||
+          book.author.toLowerCase().includes(filter.toLowerCase())
+      );
+
+      container.innerHTML = "";
+
+      if (filteredBooks.length === 0) {
+        container.innerHTML =
+          '<p style="color:#0ff; font-style: italic; text-align:center;">No books found.</p>';
+        return;
+      }
+
+      filteredBooks.forEach((book) => {
+        const card = document.createElement("div");
+        card.className = "bookCard";
+        card.innerHTML = `
+          <img src="${book.image}" alt="${book.title}" class="bookImage" />
+          <h3>${book.title}</h3>
+          <p>by ${book.author}</p>
+          <p>${book.description}</p>
+          <div class="availability">Available copies: ${book.availability}</div>
+          <button class="borrowBtn" ${
+            book.availability === 0
+              ? "disabled title='Not available now'"
+              : ""
+          }>Borrow</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function updateGreeting() {
+      const name = getUserName();
+      const hour = new Date().getHours();
+      let greet = "Hello";
+
+      if (hour >= 5 && hour < 12) greet = "Good Morning";
+      else if (hour >= 12 && hour < 17) greet = "Good Afternoon";
+      else if (hour >= 17 && hour < 21) greet = "Good Evening";
+
+      document.getElementById("greeting").textContent = `${greet}, ${name}!`;
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      window.location.href = "login.html";
+    });
+
+    document.getElementById("searchBar").addEventListener("input", (e) => {
+      renderBooks(e.target.value);
+    });
+
+    window.onload = () => {
+      updateGreeting();
+      renderBooks();
+
+      // 🔄 Auto-refresh every 5 seconds
+      setInterval(() => {
+        const filter = document.getElementById("searchBar").value;
+        renderBooks(filter);
+      }, 5000);
+    };
+  </script>
+</body>
+</html>
