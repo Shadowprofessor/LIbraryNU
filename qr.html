@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Location</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #020a0f 0%, #0f1621 100%);
+      color: #0ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px #0ff;
+    }
+
+    #qrCode {
+      margin: 2rem 0;
+      box-shadow: 0 0 20px #0ff7;
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .shelfInfo {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      color: #99ffff;
+      text-shadow: 0 0 5px #0ff9;
+    }
+
+    button {
+      margin-top: 2rem;
+      background: #0ff;
+      color: #000;
+      font-weight: bold;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+      background: #00e1e1;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <h1 id="bookTitle">📍 Book Location</h1>
+  <img id="qrCode" src="" alt="QR Code" width="200" height="200" />
+  <div class="shelfInfo" id="shelfLocation"></div>
+  <button onclick="window.history.back()">⬅ Back to Dashboard</button>
+
+  <script>
+    const booksData = [
+      {
+        id: 1,
+        title: "The History and Future of AI",
+        shelf: "Shelf A3 - Row 2",
+        qrImage: "QR1.png"
+      },
+      {
+        id: 2,
+        title: "Neural Networks and Learning Machines",
+        shelf: "Shelf B1 - Row 4",
+        qrImage: "QR2.png"
+      },
+      {
+        id: 3,
+        title: "Metasploit: the penetration tester's guide",
+        shelf: "Shelf C2 - Row 1",
+        qrImage: "QR3.png"
+      }
+    ];
+  
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+  
+    const bookId = parseInt(getQueryParam('bookId'));
+    const book = booksData.find(b => b.id === bookId);
+  
+    if (book) {
+      document.getElementById('bookTitle').textContent = `📘 ${book.title}`;
+      document.getElementById('shelfLocation').textContent = `Located at: ${book.shelf}`;
+      document.getElementById('qrCode').src = book.qrImage;
+    } else {
+      document.getElementById('bookTitle').textContent = "Book not found!";
+      document.getElementById('qrCode').style.display = "none";
+      document.getElementById('shelfLocation').textContent = "";
+    }
+  </script>
+  
+</body>
+</html>

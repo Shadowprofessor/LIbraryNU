@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Borrow Cart</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #020a0f, #0f1621);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #0ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1 {
+      margin-bottom: 2rem;
+      text-shadow: 0 0 10px #0ff;
+    }
+    .cartItem {
+      background: rgba(0, 255, 255, 0.08);
+      border-radius: 15px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      width: 100%;
+      max-width: 700px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 0 12px #0ff4, inset 0 0 10px #0ff2;
+    }
+    .cartItem img {
+      width: 100px;
+      height: 140px;
+      object-fit: contain;
+      margin-right: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 0 6px #0ff3;
+    }
+    .cartItem .info {
+      flex: 1;
+    }
+    .cartItem h3 {
+      margin: 0 0 0.3rem;
+    }
+    .cartItem p {
+      margin: 0;
+      color: #99ffffcc;
+    }
+    .empty {
+      font-style: italic;
+      color: #0ff9;
+      margin-top: 2rem;
+    }
+    .btns {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .btn {
+      background: #0ff;
+      color: #020a0f;
+      padding: 0.7rem 1.5rem;
+      font-weight: bold;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #0ff;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+    .btn:hover {
+      background: #00bcd4;
+      box-shadow: 0 0 20px #00bcd4;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Borrow Cart</h1>
+  <div id="cartContainer"></div>
+  <div class="btns">
+    <a href="index.html" class="btn">← Back to Dashboard</a>
+    <button class="btn" onclick="clearCart()">🗑️ Clear Cart</button>
+  </div>
+
+  <script>
+    const cartContainer = document.getElementById("cartContainer");
+    const cartItems = JSON.parse(localStorage.getItem("borrowCart")) || [];
+
+    if (cartItems.length === 0) {
+      cartContainer.innerHTML = '<p class="empty">Your cart is empty.</p>';
+    } else {
+      cartItems.forEach(book => {
+        const item = document.createElement("div");
+        item.className = "cartItem";
+        item.innerHTML = `
+          <img src="${book.image}" alt="${book.title}" />
+          <div class="info">
+            <h3>${book.title}</h3>
+            <p>by ${book.author}</p>
+          </div>
+        `;
+        cartContainer.appendChild(item);
+      });
+    }
+
+    function clearCart() {
+      localStorage.removeItem("borrowCart");
+      location.reload();
+    }
+  </script>
+</body>
+</html>
