@@ -29,6 +29,7 @@
       margin-bottom: 2rem;
       border-bottom: 1px solid #0ff3;
       padding-bottom: 1rem;
+      position: relative;
     }
     #greeting {
       font-size: 1.8rem;
@@ -49,6 +50,26 @@
     #logoutBtn:hover {
       background: #00bcd4;
       box-shadow: 0 0 25px #00bcd4;
+    }
+    
+    #cartIcon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #0ff;
+      display: flex;
+      align-items: center;
+    }
+    #cartIcon span {
+      margin-left: 6px;
+      background: #0ff;
+      color: #000;
+      border-radius: 50%;
+      padding: 2px 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
     }
 
     #searchBar {
@@ -88,7 +109,7 @@
       justify-content: start;
       color: #0ff;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: default;
+      cursor: pointer;
       text-align: center;
     }
     .bookCard:hover {
@@ -120,25 +141,21 @@
       margin-bottom: 1rem;
       text-shadow: 0 0 5px #0ff;        
     }
-    .borrowBtn {
-      background: #0ff;
-      border: none;
-      padding: 0.7rem;
-      border-radius: 10px;
-      font-weight: 700;
-      color: #020a0f;
+
+    .locationBtn {
+      background: #00ffff44;
+      border: 1px solid #0ff;
+      color: #0ff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 0 12px #0ff;
-      transition: background 0.3s ease;
+      font-weight: bold;
+      transition: all 0.3s ease;
     }
-    .borrowBtn:disabled {
-      background: #06666655;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-    .borrowBtn:hover:not(:disabled) {
-      background: #00bcd4;
-      box-shadow: 0 0 20px #00bcd4;
+    .locationBtn:hover {
+      background: #0ff;
+      color: #000;
+      box-shadow: 0 0 15px #0ff;
     }
 
     @media (max-width: 500px) {
@@ -155,10 +172,12 @@
   </style>
 </head>
 <body>
-
   <header>
     <div id="greeting">Welcome, Student!</div>
     <button id="logoutBtn">Logout</button>
+    <div id="cartIcon" onclick="location.href='cart.html'">
+      🛒 Cart <span id="cartCount">0</span>
+    </div>
   </header>
 
   <input type="text" id="searchBar" placeholder="Search books by title or author..." autocomplete="off" spellcheck="false" />
@@ -174,7 +193,7 @@
         id: 1,
         title: "The History and Future of AI",
         author: "T. CAVALIERE",
-        description: "Dive into the history and future of AI, from its earliest beginnings to the present day, including breakthroughs, key players, and controversies.",
+        description: "Dive into the history and future of AI...",
         field: "field1",
         availability: 0,
         image: "https://m.media-amazon.com/images/I/71tZOGS9WVL._SY522_.jpg"
@@ -183,7 +202,7 @@
         id: 2,
         title: "Neural Networks and Learning Machines",
         author: "Simon Haykin",
-        description: "Learn the latest web design trends and technologies with practical examples.",
+        description: "Learn neural networks and ML...",
         field: "field2",
         availability: 0,
         image: "https://images-na.ssl-images-amazon.com/images/P/8120340000.01.LZZZZZZZ.jpg"
@@ -192,7 +211,8 @@
         id: 3,
         title: "Metasploit: the penetration tester's guide",
         author: "Kennedy, David and Aharoni, Mati",
-        description: "I is a practical handbook for using the Metasploit Framework to identify, exploit, and validate security vulnerabilities.",
+        description: "Practical handbook for using the Metasploit Framework...",
+        field: "field3",
         availability: 0,
         image: "https://images-na.ssl-images-amazon.com/images/P/159327288X.01.MZZZZZZZ.jpg"
       },
@@ -253,12 +273,12 @@
           <p>by ${book.author}</p>
           <p>${book.description}</p>
           <div class="availability">Available copies: ${book.availability}</div>
-          <button class="borrowBtn" ${
-            book.availability === 0
-              ? "disabled title='Not available now'"
-              : ""
-          }>Borrow</button>
+          <button class="locationBtn" onclick="event.stopPropagation(); window.location.href='qr.html?bookId=${book.id}'">📍 Find Location</button>
         `;
+        card.addEventListener("click", () => {
+          localStorage.setItem("selectedBookId", book.id);
+          window.location.href = "book.html";
+        });
         container.appendChild(card);
       });
     }
@@ -289,7 +309,6 @@
       updateGreeting();
       renderBooks();
 
-      // 🔄 Auto-refresh every 5 seconds
       setInterval(() => {
         const filter = document.getElementById("searchBar").value;
         renderBooks(filter);
